@@ -21,24 +21,40 @@ public class Recovery1 {
             System.out.println("handleasync1 inp "+inp);
             System.out.println(ex);
             return inp+"h1";
-        })
+        });
         /*
         .exceptionally((ex)->{
             System.out.println("exception");
             System.out.println(ex);
             return "caught exception";
         })*/
-        .thenApplyAsync((inp)->{
+        CompletableFuture<String> cf2 = cf1.thenApplyAsync((inp)->{
             System.out.println("task4 executing");
+            cf1.complete("interrupting -then complete");
             return inp+"4";
         }).whenCompleteAsync((res,ex)->{
             System.out.println("res "+res);
             System.out.println("ex "+ex);
         });
 
-        String output = cf1.get();
-        System.out.println("output");
-        System.out.println(output);
+        String output1 = cf1.get();
+        System.out.println("output1");
+        System.out.println(output1);
+
+        String output2 = cf2.get();
+        System.out.println("output2");
+        System.out.println(output2);
+
+
+        CompletableFuture<Void> cf3 = CompletableFuture.runAsync(()->{
+            System.out.println("cf3 task1");
+        }).thenApplyAsync((inp)->{
+            System.out.println("task2 inp "+inp);
+            //cf3.complete("gello");
+            return inp;
+        });
+
+        //CompletableFuture<Void> cf4 = cf3.
 
     }
 }
